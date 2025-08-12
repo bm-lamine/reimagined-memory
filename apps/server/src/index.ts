@@ -1,10 +1,15 @@
-import { Hono } from "hono";
-import { hello } from "schema";
+import { cors } from "hono/cors";
+import { showRoutes } from "hono/dev";
 
-const app = new Hono();
+import router from "#/infrastructure/router";
+import auth from "#/services/auth";
 
-app.get("/", (c) => {
-  return c.text(hello);
-});
+const app = router();
+
+app.use("*", cors());
+
+app.route("/auth", auth);
+
+showRoutes(app);
 
 export default app;

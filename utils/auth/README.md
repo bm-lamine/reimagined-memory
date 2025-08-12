@@ -1,4 +1,4 @@
-# schema
+# auth
 
 To install dependencies:
 

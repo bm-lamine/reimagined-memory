@@ -1,5 +1,5 @@
 {
-  "name": "schema",
+  "name": "auth",
   "module": "index.ts",
   "type": "module",
   "private": true,
@@ -8,8 +8,5 @@
   },
   "peerDependencies": {
     "typescript": "^5"
-  },
-  "dependencies": {
-    "zod": "^4.0.17"
   }
 }
