@@ -1,9 +1,17 @@
-export const name = "auth";
+import { AuthSchema, VerifyEmailSchema } from "./schema/auth";
 
-export const hash = async (plain: string) => {
-  return await Bun.password.hash(plain);
+const hash = async (plain: string) => {
+  return await Bun.password.hash(plain, "bcrypt");
 };
 
-export const verify = async (plain: string, hash: string) => {
-  return await Bun.password.verify(plain, hash);
+const verify = async (plain: string, hash: string) => {
+  return await Bun.password.verify(plain, hash, "bcrypt");
 };
+
+type Auth = {
+  userId: string;
+  email: string;
+  verified: boolean;
+};
+
+export { AuthSchema, hash, verify, VerifyEmailSchema, type Auth };
