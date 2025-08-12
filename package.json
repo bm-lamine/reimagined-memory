@@ -1,0 +1,8 @@
+{
+  "name": "bilgreen",
+  "private": true,
+  "workspaces": [
+    "utils/*",
+    "apps/*"
+  ]
+}
