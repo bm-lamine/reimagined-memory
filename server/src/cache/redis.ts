@@ -1,10 +1,7 @@
-// import { env } from "#/src/env";
-// import { createClient } from "redis";
+import { env } from "#/src/config/env";
+import { createClient } from "redis";
 
-// const client = createClient({ url: env.REDIS_URL });
+const client = createClient({ url: env.REDIS_URL });
+client.on("error", (err) => console.error(`[REDIS]: ${err}`));
 
-// await client.connect();
-
-// client.on("error", (err) => console.error(`[REDIS]: ${err}`));
-
-// export default client;
+export default client;

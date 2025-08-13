@@ -1,15 +1,12 @@
-import { env } from "#/config/env";
-import { create } from "#/utils/router";
+import { env } from "#/src/config/env";
+import { bootstrap } from "#/src/config/init";
 import { websocket } from "hono/bun";
+import app from "./app";
 
-const server = create();
-
-server.get("/", (c) => {
-  return c.text("Hello Hono!");
-});
+await bootstrap();
 
 export default {
   port: env.SERVER_PORT,
-  fetch: server.fetch,
+  fetch: app.fetch,
   websocket,
 };
