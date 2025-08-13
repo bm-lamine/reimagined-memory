@@ -1,4 +1,4 @@
-import client from "#/src/cache/redis";
+import client from "#/cache/redis";
 
 export async function bootstrap() {
   console.log("Connecting to Redis...");

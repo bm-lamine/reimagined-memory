@@ -1,4 +1,4 @@
-import { create } from "./utils/router";
+import { create } from "#/utils/router";
 
 const app = create();
 

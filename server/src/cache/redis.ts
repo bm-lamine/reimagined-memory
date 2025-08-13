@@ -1,4 +1,4 @@
-import { env } from "#/src/config/env";
+import { env } from "#/config/env";
 import { createClient } from "redis";
 
 const client = createClient({ url: env.REDIS_URL });

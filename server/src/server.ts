@@ -1,5 +1,5 @@
-import { env } from "#/src/config/env";
-import { bootstrap } from "#/src/config/init";
+import { env } from "#/config/env";
+import { bootstrap } from "#/config/init";
 import { websocket } from "hono/bun";
 import app from "./app";
 

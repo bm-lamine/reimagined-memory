@@ -9,6 +9,7 @@ export const env = createEnv({
       .default("development"),
     DATABASE_URL: z.url(),
     REDIS_URL: z.url(),
+    JWT_SECRET: z.string(),
   },
 
   /**
