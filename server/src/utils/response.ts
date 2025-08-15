@@ -1,11 +1,12 @@
 import { ZodError } from "zod";
 import type { $ZodIssue } from "zod/v4/core";
 
-export function success(message: string, data?: any) {
+export function success(message: string, next: string | undefined, data?: any) {
   return {
     success: true,
     status: 200,
     message,
+    next,
     data,
   };
 }
