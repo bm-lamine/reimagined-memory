@@ -1,12 +1,11 @@
 import { STATUS_CODE } from "#/config/codes";
-import { db, schema } from "#/database";
 import { validator } from "#/middlewares/validator";
+import UserRepo from "#/repos/auth/user";
 import AuthSchema from "#/schema/auth";
 import Jwt from "#/utils/jwt";
 import Password from "#/utils/password";
 import { failure, success } from "#/utils/response";
 import { create } from "#/utils/router";
-import { eq } from "drizzle-orm";
 import { setCookie } from "hono/cookie";
 
 const login = create();
@@ -14,11 +13,7 @@ const login = create();
 login.post("/", validator("json", AuthSchema.login), async (ctx) => {
   const data = ctx.req.valid("json");
 
-  const [user] = await db
-    .select()
-    .from(schema.users)
-    .where(eq(schema.users.email, data.email))
-    .limit(1);
+  const user = await UserRepo.findEmail(data.email);
 
   if (!user) {
     return ctx.json(
@@ -29,7 +24,7 @@ login.post("/", validator("json", AuthSchema.login), async (ctx) => {
           message: "email not found in our records",
         },
       ]),
-      STATUS_CODE.BAD_REQUEST
+      STATUS_CODE.BAD_REQUEST,
     );
   } else if (!(await Password.verify(data.password, user.password))) {
     return ctx.json(
@@ -40,7 +35,7 @@ login.post("/", validator("json", AuthSchema.login), async (ctx) => {
           message: "invalid credentials",
         },
       ]),
-      STATUS_CODE.BAD_REQUEST
+      STATUS_CODE.BAD_REQUEST,
     );
   } else if (!user.emailVerifiedAt) {
     return ctx.json(
@@ -51,7 +46,7 @@ login.post("/", validator("json", AuthSchema.login), async (ctx) => {
           message: "email not verified",
         },
       ]),
-      STATUS_CODE.BAD_REQUEST
+      STATUS_CODE.BAD_REQUEST,
     );
   }
 

@@ -17,14 +17,13 @@ resendVerification.post(
 
     const plain = createOtp();
     const hash = await Password.hash(plain);
-
     void VerificationRepo.store("email-verification", data.email, hash);
 
     return ctx.json(
       success("verification mail sent", undefined, { otp: plain }),
-      STATUS_CODE.OK
+      STATUS_CODE.OK,
     );
-  }
+  },
 );
 
 export default resendVerification;

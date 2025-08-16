@@ -25,5 +25,5 @@ export const units = store.table(
     unique().on(t.name),
     unique().on(t.short),
     unique().on(t.name, t.short),
-  ]
+  ],
 );
