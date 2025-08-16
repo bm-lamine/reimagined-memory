@@ -3,7 +3,7 @@ import { type Config } from "drizzle-kit";
 import { env } from "#/config/env";
 
 export default {
-  out: "./migrations",
+  out: "./drizzle",
   schema: "./src/database/schema.ts",
   breakpoints: false,
   strict: true,
