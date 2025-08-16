@@ -1,7 +1,7 @@
 import { env } from "#/config/env";
-import type { Auth } from "#/types/auth";
 import { sign } from "hono/jwt";
 import type { CookieOptions } from "hono/utils/cookie";
+import type { Auth } from "shared/types/auth";
 
 export default class Jwt {
   static readonly name = "auth_token";

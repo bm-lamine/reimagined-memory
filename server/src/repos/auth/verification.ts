@@ -1,5 +1,5 @@
 import client from "#/cache/redis";
-import type { VerificationType } from "#/types/auth";
+import type { VerificationType } from "shared/types/auth";
 
 export default class VerificationRepo {
   static readonly duration = 15 * 60;

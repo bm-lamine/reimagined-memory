@@ -1,6 +1,6 @@
 import { db, schema } from "#/database";
-import type { CreateUser, UpdateUser, User } from "#/types/user";
 import { eq, getTableColumns } from "drizzle-orm";
+import type { CreateUser, UpdateUser, User } from "shared/types/user";
 
 export default class UserRepo {
   static async findAll(): Promise<Array<Omit<User, "password">>> {

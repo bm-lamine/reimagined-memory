@@ -1,6 +1,6 @@
-import type { Media } from "#/types/store";
 import cuid2 from "@paralleldrive/cuid2";
 import { foreignKey, pgSchema, unique } from "drizzle-orm/pg-core";
+import type { Media } from "shared/types/store";
 
 // * Auth Schema
 

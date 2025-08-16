@@ -12,6 +12,6 @@ auth.route("/login", login);
 auth.route("/register", register);
 
 auth.route("/verify-email", verifyEmail);
-auth.route("/resend-verificatio", resendVerification);
+auth.route("/resend-verification", resendVerification);
 
 export default auth;

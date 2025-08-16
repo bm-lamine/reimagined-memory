@@ -6,7 +6,7 @@ import type { ZodType } from "zod";
 
 export const validator = <
   T extends ZodType,
-  Target extends keyof ValidationTargets
+  Target extends keyof ValidationTargets,
 >(
   target: Target,
   schema: T
