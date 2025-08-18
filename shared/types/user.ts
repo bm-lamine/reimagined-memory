@@ -1,6 +1,6 @@
-import type { schema } from "#/database";
-import type { UserSchema } from "#/schema/auth/user";
 import type { InferSelectModel } from "drizzle-orm";
+import type { UserSchema } from "schema/auth/usr/user";
+import { schema } from "server/src/database";
 import type z from "zod";
 
 export type User = InferSelectModel<typeof schema.users>;

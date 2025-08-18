@@ -49,6 +49,7 @@
     "shared": {
       "name": "shared",
       "dependencies": {
+        "server": "workspace:*",
         "zod": "^4.0.17",
       },
     },
