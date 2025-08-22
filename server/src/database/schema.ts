@@ -120,6 +120,7 @@ export const requests = store.table(
     userId: db.varchar().notNull(),
     content: db.varchar().notNull(),
     media: db.jsonb().$type<Array<Media>>().notNull(),
+    isOpen: db.boolean().default(true).notNull(),
   }),
   (t) => [foreignKey({ columns: [t.userId], foreignColumns: [users.id] })]
 );

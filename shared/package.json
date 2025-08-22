@@ -3,7 +3,9 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "zod": "^4.0.17",
-    "server": "workspace:*"
+    "drizzle-orm": "^0.44.4",
+    "drizzle-zod": "^0.8.3",
+    "server": "workspace:*",
+    "zod": "^4.0.17"
   }
 }

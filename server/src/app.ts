@@ -1,15 +1,17 @@
 import auth from "#/routers/auth";
+import store from "#/routers/store";
 import { create } from "#/utils/router";
-import { showRoutes } from "hono/dev";
+import * as dev from "hono/dev";
 
 const app = create();
 
 app.route("/auth", auth);
+app.route("/store", store);
 
 app.get("/", (c) => {
   return c.text("Hello Hono!");
 });
 
-showRoutes(app);
+dev.showRoutes(app);
 
 export default app;
