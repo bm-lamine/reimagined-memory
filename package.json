@@ -1,0 +1,9 @@
+{
+  "name": "enjoy",
+  "private": true,
+  "workspaces": [
+    "server",
+    "shared/*"
+  ],
+  "scripts": {}
+}

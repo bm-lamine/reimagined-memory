@@ -1,0 +1,9 @@
+{
+  "name": "@enjoy/schema",
+  "private": true,
+  "dependencies": {
+    "@enjoy/server": "workspace:*",
+    "drizzle-zod": "^0.8.3",
+    "zod": "^4.1.1"
+  }
+}
