@@ -7,7 +7,7 @@ export default class {
   static readonly query = db.select().from(schema.requests).$dynamic();
 
   static async gerById(id: string) {
-    const data = await this.query.where(eq(schema.requests.id, id)).execute();
+    const data = await this.query.where(eq(schema.requests.id, id));
     return data;
   }
 

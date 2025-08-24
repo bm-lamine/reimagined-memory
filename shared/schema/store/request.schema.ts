@@ -1,7 +1,7 @@
 import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
 import { schema } from "server/src/database";
 
-export default class RequestSchema {
+export default class {
   static readonly create = createInsertSchema(schema.requests).omit({
     id: true,
     userId: true,

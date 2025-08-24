@@ -51,7 +51,7 @@ export const categories = store.table(
     id: db.varchar().$defaultFn(cuid2.createId).primaryKey(),
     name: db.varchar().notNull(),
     description: db.varchar(),
-    media: db.jsonb().$type<Media>().notNull(),
+    media: db.jsonb().$type<Array<Media>>().notNull(),
   }),
   (t) => [unique().on(t.name)]
 );
@@ -64,8 +64,8 @@ export const subcategories = store.table(
     categoryId: db.varchar().notNull(),
   }),
   (t) => [
-    foreignKey({ columns: [t.categoryId], foreignColumns: [categories.id] }),
     unique().on(t.name),
+    foreignKey({ columns: [t.categoryId], foreignColumns: [categories.id] }),
   ]
 );
 
@@ -75,9 +75,9 @@ export const products = store.table(
     id: db.varchar().$defaultFn(cuid2.createId).primaryKey(),
     userId: db.varchar().notNull(),
     name: db.varchar().notNull(),
-    media: db.jsonb().$type<Array<Media>>().notNull(),
     pricePU: db.numeric().notNull(),
     maximumQty: db.numeric(),
+    media: db.jsonb().$type<Array<Media>>().notNull(),
   }),
   (t) => [foreignKey({ columns: [t.userId], foreignColumns: [users.id] })]
 );
@@ -96,8 +96,8 @@ export const offers = store.table(
     extRequest: db.boolean().default(false).notNull(),
   }),
   (t) => [
-    foreignKey({ columns: [t.productId], foreignColumns: [users.id] }),
     foreignKey({ columns: [t.userId], foreignColumns: [users.id] }),
+    foreignKey({ columns: [t.productId], foreignColumns: [products.id] }),
   ]
 );
 
@@ -119,8 +119,8 @@ export const requests = store.table(
     id: db.varchar().$defaultFn(cuid2.createId).primaryKey(),
     userId: db.varchar().notNull(),
     content: db.varchar().notNull(),
-    media: db.jsonb().$type<Array<Media>>().notNull(),
     isOpen: db.boolean().default(true).notNull(),
+    media: db.jsonb().$type<Array<Media>>().notNull(),
   }),
   (t) => [foreignKey({ columns: [t.userId], foreignColumns: [users.id] })]
 );
@@ -131,9 +131,14 @@ export const responses = store.table(
     id: db.varchar().$defaultFn(cuid2.createId).primaryKey(),
     userId: db.varchar().notNull(),
     productId: db.varchar().notNull(),
+    requestId: db.varchar().notNull(),
     content: db.varchar().notNull(),
   }),
-  (t) => [foreignKey({ columns: [t.userId], foreignColumns: [users.id] })]
+  (t) => [
+    foreignKey({ columns: [t.userId], foreignColumns: [users.id] }),
+    foreignKey({ columns: [t.productId], foreignColumns: [products.id] }),
+    foreignKey({ columns: [t.requestId], foreignColumns: [requests.id] }),
+  ]
 );
 
 // * Website Schema
