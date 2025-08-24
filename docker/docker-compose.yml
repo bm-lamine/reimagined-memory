@@ -1,0 +1,65 @@
+services:
+  # PostgreSQL
+  postgres:
+    image: postgres:16-alpine
+    container_name: enjoy_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: enjoy
+      POSTGRES_PASSWORD: enjoy_pass
+      POSTGRES_DB: enjoy_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # Redis
+  redis:
+    image: redis:7-alpine
+    container_name: enjoy_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  # MinIO
+  minio:
+    image: minio/minio:latest
+    container_name: enjoy_minio
+    restart: unless-stopped
+    environment:
+      MINIO_ROOT_USER: enjoy
+      MINIO_ROOT_PASSWORD: enjoy_pass
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000" # S3 API
+      - "9001:9001" # Web UI
+    volumes:
+      - minio_data:/data
+
+  # Mailpit
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: enjoy_mailpit
+    restart: unless-stopped
+    ports:
+      - "1025:1025" # SMTP
+      - "8025:8025" # Web UI
+
+  # tusd (resumable upload server)
+  tusd:
+    image: tusproject/tusd:latest
+    container_name: enjoy_tusd
+    restart: unless-stopped
+    command: -host=0.0.0.0 -port=1080 -dir=/data
+    ports:
+      - "1080:1080"
+    volumes:
+      - tusd_data:/data
+
+volumes:
+  postgres_data:
+  redis_data:
+  minio_data:
+  tusd_data:
