@@ -64,7 +64,23 @@ export const demands = store.table(
   (t) => [primaryKey({ columns: [t.id] })]
 );
 
-// export const proposals = store.table("proposals", (c) => ({}));
+export const proposals = store.table(
+  "proposals",
+  (c) => ({
+    id: c.varchar().$defaultFn(createId).notNull(),
+    content: c.varchar().notNull(),
+    productId: c.varchar().notNull(),
+    demandId: c.varchar().notNull(),
+    createdAt: c
+      .timestamp({ mode: "date", withTimezone: true })
+      .$defaultFn(() => new Date())
+      .notNull(),
+    updatedAt: c
+      .timestamp({ mode: "date", withTimezone: true })
+      .$onUpdateFn(() => new Date()),
+  }),
+  (t) => [primaryKey({ columns: [t.id] })]
+);
 
 export const website = pgSchema("website");
 
