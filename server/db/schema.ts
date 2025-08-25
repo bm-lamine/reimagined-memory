@@ -1,6 +1,6 @@
 import type { Media } from "@enjoy/types/store";
 import { createId } from "@paralleldrive/cuid2";
-import { pgSchema, primaryKey, unique } from "drizzle-orm/pg-core";
+import { foreignKey, pgSchema, primaryKey, unique } from "drizzle-orm/pg-core";
 
 export const store = pgSchema("store");
 
@@ -43,6 +43,20 @@ export const categories = store.table(
   (t) => [
     primaryKey({ columns: [t.id] }),
     unique("unique_category_name").on(t.name),
+  ]
+);
+
+export const subs = store.table(
+  "subs",
+  (db) => ({
+    id: db.varchar().$defaultFn(createId).notNull(),
+    name: db.varchar().notNull(),
+    categoryId: db.varchar().notNull(),
+  }),
+  (t) => [
+    primaryKey({ columns: [t.id] }),
+    unique().on(t.name),
+    foreignKey({ columns: [t.categoryId], foreignColumns: [categories.id] }),
   ]
 );
 
