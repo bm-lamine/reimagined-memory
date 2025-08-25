@@ -4,9 +4,9 @@ import { failed, hn, ok, valid } from "main/utils";
 import demandRepo from "services/store/repos/demand.repo";
 import z from "zod";
 
-const category = hn();
+const demand = hn();
 
-category.get("/", async (ctx) => {
+demand.get("/", async (ctx) => {
   const units = await demandRepo.query();
   return ctx.json(
     ok({
@@ -19,40 +19,34 @@ category.get("/", async (ctx) => {
   );
 });
 
-category.get(
-  "/:id",
-  valid("param", z.object({ id: z.cuid2() })),
-  async (ctx) => {
-    const { id } = ctx.req.valid("param");
-    const category = await demandRepo.queryById(id);
+demand.get("/:id", valid("param", z.object({ id: z.cuid2() })), async (ctx) => {
+  const { id } = ctx.req.valid("param");
+  const demand = await demandRepo.queryById(id);
 
-    if (!category) {
-      return ctx.json(
-        failed([{ code: "custom", path: [], message: "category not found" }]),
-        STATUS_CODE.BAD_REQUEST
-      );
-    }
-
+  if (!demand) {
     return ctx.json(
-      ok({
-        success: true,
-        message: "category fetched",
-        data: category,
-        next: undefined,
-      })
+      failed([{ code: "custom", path: [], message: "demand not found" }]),
+      STATUS_CODE.BAD_REQUEST
     );
   }
-);
 
-category.post("/", valid("json", demandSchema.create), async (ctx) => {
+  return ctx.json(
+    ok({
+      success: true,
+      message: "demand fetched",
+      data: demand,
+      next: undefined,
+    })
+  );
+});
+
+demand.post("/", valid("json", demandSchema.create), async (ctx) => {
   const data = ctx.req.valid("json");
-  const category = await demandRepo.create(data);
+  const demand = await demandRepo.create(data);
 
-  if (!category) {
+  if (!demand) {
     return ctx.json(
-      failed([
-        { code: "custom", path: [], message: "creating category failed" },
-      ]),
+      failed([{ code: "custom", path: [], message: "creating demand failed" }]),
       STATUS_CODE.INTERNAL_SERVER_ERROR
     );
   }
@@ -60,15 +54,15 @@ category.post("/", valid("json", demandSchema.create), async (ctx) => {
   return ctx.json(
     ok({
       success: true,
-      message: "category created",
-      data: category,
+      message: "demand created",
+      data: demand,
       next: undefined,
     }),
     STATUS_CODE.OK
   );
 });
 
-category.patch(
+demand.patch(
   "/:id",
   valid("param", z.object({ id: z.cuid2() })),
   valid("json", demandSchema.update),
@@ -79,17 +73,17 @@ category.patch(
     if (!(await demandRepo.queryById(id))) {
       return ctx.json(
         failed([
-          { code: "custom", path: [], message: "updating category failed" },
+          { code: "custom", path: [], message: "updating demand failed" },
         ]),
         STATUS_CODE.BAD_REQUEST
       );
     }
 
-    const category = await demandRepo.update(id, data);
-    if (!category) {
+    const demand = await demandRepo.update(id, data);
+    if (!demand) {
       return ctx.json(
         failed([
-          { code: "custom", path: [], message: "updating category failed" },
+          { code: "custom", path: [], message: "updating demand failed" },
         ]),
         STATUS_CODE.INTERNAL_SERVER_ERROR
       );
@@ -98,8 +92,8 @@ category.patch(
     return ctx.json(
       ok({
         success: true,
-        message: "category updated",
-        data: category,
+        message: "demand updated",
+        data: demand,
         next: undefined,
       }),
       STATUS_CODE.OK
@@ -107,17 +101,17 @@ category.patch(
   }
 );
 
-category.delete(
+demand.delete(
   "/:id",
   valid("param", z.object({ id: z.cuid2() })),
   async (ctx) => {
     const { id } = ctx.req.valid("param");
-    const category = await demandRepo.delete(id);
+    const demand = await demandRepo.delete(id);
 
-    if (!category) {
+    if (!demand) {
       return ctx.json(
         failed([
-          { code: "custom", path: [], message: "deleting category failed" },
+          { code: "custom", path: [], message: "deleting demand failed" },
         ]),
         STATUS_CODE.INTERNAL_SERVER_ERROR
       );
@@ -126,8 +120,8 @@ category.delete(
     return ctx.json(
       ok({
         success: true,
-        message: "category deleted",
-        data: category,
+        message: "demand deleted",
+        data: demand,
         next: undefined,
       }),
       STATUS_CODE.OK
@@ -135,4 +129,4 @@ category.delete(
   }
 );
 
-export default category;
+export default demand;
