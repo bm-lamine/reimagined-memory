@@ -14,7 +14,8 @@ unit.get("/", async (ctx) => {
       message: "units fetched",
       data: units,
       next: undefined,
-    })
+    }),
+    STATUS_CODE.OK
   );
 });
 
@@ -25,7 +26,7 @@ unit.get("/:id", valid("param", z.object({ id: z.cuid2() })), async (ctx) => {
   if (!unit) {
     return ctx.json(
       failed([{ code: "custom", path: [], message: "unit not found" }]),
-      STATUS_CODE.NOT_FOUND
+      STATUS_CODE.BAD_REQUEST
     );
   }
 
@@ -41,24 +42,21 @@ unit.get("/:id", valid("param", z.object({ id: z.cuid2() })), async (ctx) => {
 
 unit.post("/", valid("json", unitSchema.create), async (ctx) => {
   const data = ctx.req.valid("json");
-  const conflicts = await unitRepo.getConflicts({
-    name: data.name,
-    alias: data.alias,
-  });
+  const conflicts = await unitRepo.getConflicts(data);
 
   if (conflicts.has("name")) {
     return ctx.json(
       failed([
         { code: "custom", path: ["name"], message: "unit name already used" },
       ]),
-      STATUS_CODE.INTERNAL_SERVER_ERROR
+      STATUS_CODE.BAD_REQUEST
     );
   } else if (conflicts.has("alias")) {
     return ctx.json(
       failed([
         { code: "custom", path: ["alias"], message: "unit alias already used" },
       ]),
-      STATUS_CODE.INTERNAL_SERVER_ERROR
+      STATUS_CODE.BAD_REQUEST
     );
   }
 
@@ -77,7 +75,8 @@ unit.post("/", valid("json", unitSchema.create), async (ctx) => {
       message: "unit created",
       data: unit,
       next: undefined,
-    })
+    }),
+    STATUS_CODE.OK
   );
 });
 
@@ -88,23 +87,19 @@ unit.patch(
   async (ctx) => {
     const { id } = ctx.req.valid("param");
     const data = ctx.req.valid("json");
-
-    const conflicts = await unitRepo.getConflicts({
-      name: data.name,
-      alias: data.alias,
-    });
+    const conflicts = await unitRepo.getConflicts(data);
 
     if (!(await unitRepo.queryById(id))) {
       return ctx.json(
-        failed([{ code: "custom", path: [], message: "unit not found" }]),
-        STATUS_CODE.NOT_FOUND
+        failed([{ code: "custom", path: [], message: "updating unit failed" }]),
+        STATUS_CODE.BAD_REQUEST
       );
     } else if (conflicts.has("name")) {
       return ctx.json(
         failed([
           { code: "custom", path: ["name"], message: "unit name already used" },
         ]),
-        STATUS_CODE.INTERNAL_SERVER_ERROR
+        STATUS_CODE.BAD_REQUEST
       );
     } else if (conflicts.has("alias")) {
       return ctx.json(
@@ -115,7 +110,7 @@ unit.patch(
             message: "unit alias already used",
           },
         ]),
-        STATUS_CODE.INTERNAL_SERVER_ERROR
+        STATUS_CODE.BAD_REQUEST
       );
     }
 
@@ -134,7 +129,8 @@ unit.patch(
         message: "unit updated",
         data: unit,
         next: undefined,
-      })
+      }),
+      STATUS_CODE.OK
     );
   }
 );
@@ -159,7 +155,8 @@ unit.delete(
         message: "unit updated",
         data: unit,
         next: undefined,
-      })
+      }),
+      STATUS_CODE.OK
     );
   }
 );

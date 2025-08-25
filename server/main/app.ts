@@ -1,15 +1,12 @@
-import env from "config/env";
-import { websocket } from "hono/bun";
-import { hn } from "main/utils";
+import store from "store";
+import { hn } from "./utils";
 
 const app = hn();
+
+app.route("/store", store);
 
 app.get("/", (c) => {
   return c.text("Hello Hono!");
 });
 
-export default {
-  port: env.SERVER_PORT,
-  fetch: app.fetch,
-  websocket,
-};
+export default app;
