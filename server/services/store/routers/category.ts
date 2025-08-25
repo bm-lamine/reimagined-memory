@@ -7,12 +7,12 @@ import z from "zod";
 const category = hn();
 
 category.get("/", async (ctx) => {
-  const units = await categoryRepo.query();
+  const categories = await categoryRepo.query();
   return ctx.json(
     ok({
       success: true,
-      message: "units fetched",
-      data: units,
+      message: "categories fetched",
+      data: categories,
       next: undefined,
     }),
     STATUS_CODE.OK

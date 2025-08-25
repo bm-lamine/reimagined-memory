@@ -7,6 +7,7 @@ export default class {
     .omit({
       id: true,
       description: true,
+      image: true,
       createdAt: true,
       updatedAt: true,
     })
