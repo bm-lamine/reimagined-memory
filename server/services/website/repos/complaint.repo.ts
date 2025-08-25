@@ -1,4 +1,4 @@
-import type { ComplaintCreate, ComplaintUpdate } from "@enjoy/types/store";
+import type { ComplaintCreate, ComplaintUpdate } from "@enjoy/types/website";
 import { db, schema } from "db";
 import { eq, getTableColumns } from "drizzle-orm";
 
