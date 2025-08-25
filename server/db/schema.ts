@@ -1,3 +1,4 @@
+import type { Media } from "@enjoy/types/store";
 import { createId } from "@paralleldrive/cuid2";
 import { pgSchema, primaryKey, unique } from "drizzle-orm/pg-core";
 
@@ -30,6 +31,7 @@ export const categories = store.table(
     id: c.varchar().$defaultFn(createId).notNull(),
     name: c.varchar({ length: 256 }).notNull(),
     description: c.varchar(),
+    image: c.jsonb().$type<Media>().notNull(),
     createdAt: c
       .timestamp({ mode: "date", withTimezone: true })
       .$defaultFn(() => new Date())
@@ -43,6 +45,26 @@ export const categories = store.table(
     unique("unique_category_name").on(t.name),
   ]
 );
+
+export const demands = store.table(
+  "demands",
+  (c) => ({
+    id: c.varchar().$defaultFn(createId).notNull(),
+    content: c.varchar().notNull(),
+    userId: c.varchar().notNull(),
+    images: c.jsonb().$type<Media[]>().notNull(),
+    createdAt: c
+      .timestamp({ mode: "date", withTimezone: true })
+      .$defaultFn(() => new Date())
+      .notNull(),
+    updatedAt: c
+      .timestamp({ mode: "date", withTimezone: true })
+      .$onUpdateFn(() => new Date()),
+  }),
+  (t) => [primaryKey({ columns: [t.id] })]
+);
+
+// export const proposals = store.table("proposals", (c) => ({}));
 
 export const website = pgSchema("website");
 
