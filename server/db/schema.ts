@@ -6,7 +6,7 @@ export const store = pgSchema("store");
 export const units = store.table(
   "units",
   (c) => ({
-    id: c.varchar().$defaultFn(createId),
+    id: c.varchar().$defaultFn(createId).notNull(),
     name: c.varchar({ length: 256 }).notNull(),
     alias: c.varchar({ length: 256 }).notNull(),
     createdAt: c
@@ -22,4 +22,33 @@ export const units = store.table(
     unique("unique_unit_name").on(t.name),
     unique("unique_unit_shortname").on(t.alias),
   ]
+);
+
+export const website = pgSchema("website");
+
+export const complaintsSubject = website.enum("complaints_subject_enum", [
+  "general_inquiry",
+  "support_request",
+  "feedback",
+  "billing_issue",
+  "partnership_opportunity",
+  "job_application",
+  "feature_request",
+  "bug_report",
+  "account_help",
+  "other",
+]);
+
+export const complaints = website.table(
+  "complaints",
+  (c) => ({
+    id: c.varchar().$defaultFn(createId).notNull(),
+    name: c.varchar().notNull(),
+    email: c.varchar().notNull(),
+    phone: c.varchar().notNull(),
+    subject: complaintsSubject().default("other").notNull(),
+    content: c.varchar().notNull(),
+    reviewed: c.boolean().default(false),
+  }),
+  (t) => [primaryKey({ columns: [t.id] })]
 );

@@ -1,9 +1,4 @@
-import type { Unit } from "@enjoy/types/store";
-import type {
-  UnitCreate,
-  UnitSelect,
-  UnitUpdate,
-} from "@enjoy/types/store/schema";
+import type { UnitCreate, UnitSelect, UnitUpdate } from "@enjoy/types/store";
 import { db, schema } from "db";
 import { eq, getTableColumns, or, type SQLWrapper } from "drizzle-orm";
 

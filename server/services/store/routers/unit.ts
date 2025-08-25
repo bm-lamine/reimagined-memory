@@ -1,7 +1,7 @@
 import unitSchema from "@enjoy/schema/store/unit.schema";
 import { STATUS_CODE } from "config/codes";
 import { failed, hn, ok, valid } from "main/utils";
-import unitRepo from "store/repos/unit.repo";
+import unitRepo from "services/store/repos/unit.repo";
 import z from "zod";
 
 const unit = hn();
@@ -152,7 +152,7 @@ unit.delete(
     return ctx.json(
       ok({
         success: true,
-        message: "unit updated",
+        message: "unit deleted",
         data: unit,
         next: undefined,
       }),
