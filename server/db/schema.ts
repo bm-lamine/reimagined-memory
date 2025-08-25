@@ -24,6 +24,26 @@ export const units = store.table(
   ]
 );
 
+export const categories = store.table(
+  "categories",
+  (c) => ({
+    id: c.varchar().$defaultFn(createId).notNull(),
+    name: c.varchar({ length: 256 }).notNull(),
+    description: c.varchar(),
+    createdAt: c
+      .timestamp({ mode: "date", withTimezone: true })
+      .$defaultFn(() => new Date())
+      .notNull(),
+    updatedAt: c
+      .timestamp({ mode: "date", withTimezone: true })
+      .$onUpdateFn(() => new Date()),
+  }),
+  (t) => [
+    primaryKey({ columns: [t.id] }),
+    unique("unique_category_name").on(t.name),
+  ]
+);
+
 export const website = pgSchema("website");
 
 export const complaintsSubject = website.enum("complaints_subject_enum", [
