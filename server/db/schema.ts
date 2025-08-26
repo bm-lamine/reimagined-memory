@@ -48,15 +48,33 @@ export const categories = store.table(
 
 export const subs = store.table(
   "subs",
-  (db) => ({
-    id: db.varchar().$defaultFn(createId).notNull(),
-    name: db.varchar().notNull(),
-    categoryId: db.varchar().notNull(),
+  (c) => ({
+    id: c.varchar().$defaultFn(createId).notNull(),
+    name: c.varchar().notNull(),
+    categoryId: c.varchar().notNull(),
   }),
   (t) => [
     primaryKey({ columns: [t.id] }),
-    unique().on(t.name),
+    unique("unique_sub_category_name").on(t.name),
     foreignKey({ columns: [t.categoryId], foreignColumns: [categories.id] }),
+  ]
+);
+
+export const products = store.table(
+  "products",
+  (c) => ({
+    id: c.varchar().$defaultFn(createId).notNull(),
+    name: c.varchar().notNull(),
+    description: c.varchar(),
+    pricePu: c.numeric({ mode: "string" }).notNull(),
+    maxQty: c.numeric({ mode: "string" }),
+    // categoryId: c.varchar().notNull(),
+    // subId: c.varchar(),
+  }),
+  (t) => [
+    primaryKey({ columns: [t.id] }),
+    // foreignKey({ columns: [t.categoryId], foreignColumns: [categories.id] }),
+    // foreignKey({ columns: [t.subId], foreignColumns: [subs.id] }),
   ]
 );
 
