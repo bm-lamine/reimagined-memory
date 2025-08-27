@@ -1,4 +1,9 @@
-import type { UserCreate, UserSelect, UserUpdate } from "@enjoy/types/auth";
+import type {
+  User,
+  UserCreate,
+  UserSelect,
+  UserUpdate,
+} from "@enjoy/types/auth";
 import { db, schema } from "db";
 import { eq, getTableColumns, or, type SQLWrapper } from "drizzle-orm";
 
@@ -61,6 +66,14 @@ export default class {
     }
 
     return conflicts;
+  }
+
+  static toJson(user: User) {
+    return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+    };
   }
 }
 

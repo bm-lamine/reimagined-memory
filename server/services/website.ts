@@ -1,5 +1,5 @@
 import { hn } from "main/utils";
-import complaint from "./router/complaint";
+import complaint from "routers/website/complaint";
 
 const website = hn();
 

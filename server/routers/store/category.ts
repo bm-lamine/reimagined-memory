@@ -1,7 +1,7 @@
 import categorySchema from "@enjoy/schema/store/category.schema";
 import { STATUS_CODE } from "config/codes";
 import { failed, hn, ok, valid } from "main/utils";
-import categoryRepo from "services/store/repos/category.repo";
+import categoryRepo from "db/repos/store/category.repo";
 import z from "zod";
 
 const category = hn();

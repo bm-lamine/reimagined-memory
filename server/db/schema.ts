@@ -8,18 +8,6 @@ import {
   unique,
 } from "drizzle-orm/pg-core";
 
-export const bytea = customType<{ data: Uint8Array }>({
-  dataType() {
-    return "bytea";
-  },
-  toDriver(value: Uint8Array) {
-    return Buffer.from(value);
-  },
-  fromDriver(value) {
-    return new Uint8Array(value as Buffer);
-  },
-});
-
 export const auth = pgSchema("auth");
 
 export const users = auth.table(
@@ -29,6 +17,14 @@ export const users = auth.table(
     name: c.varchar().notNull(),
     email: c.varchar().notNull(),
     password: c.varchar().notNull(),
+    isActive: c.boolean().default(false).notNull(),
+    createdAt: c
+      .timestamp({ mode: "date", withTimezone: true })
+      .$defaultFn(() => new Date())
+      .notNull(),
+    updatedAt: c
+      .timestamp({ mode: "date", withTimezone: true })
+      .$onUpdateFn(() => new Date()),
   }),
   (t) => [
     primaryKey({ columns: [t.id] }),
@@ -36,13 +32,13 @@ export const users = auth.table(
   ]
 );
 
-export const sessions = auth.table(
+export const tokens = auth.table(
   "sessions",
   (c) => ({
     id: c.varchar().$defaultFn(createId).notNull(),
     userId: c.varchar().notNull(),
-    hash: bytea().notNull(),
-    lastVerifiedAt: c.timestamp({ mode: "date", withTimezone: true }).notNull(),
+    token: c.varchar().notNull(),
+    expiresAt: c.timestamp({ mode: "date", withTimezone: true }).notNull(),
     createdAt: c
       .timestamp({ mode: "date", withTimezone: true })
       .$defaultFn(() => new Date())

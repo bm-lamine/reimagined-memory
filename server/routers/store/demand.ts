@@ -1,7 +1,7 @@
 import demandSchema from "@enjoy/schema/store/demand.schema";
 import { STATUS_CODE } from "config/codes";
 import { failed, hn, ok, valid } from "main/utils";
-import demandRepo from "services/store/repos/demand.repo";
+import demandRepo from "db/repos/store/demand.repo";
 import z from "zod";
 
 const demand = hn();

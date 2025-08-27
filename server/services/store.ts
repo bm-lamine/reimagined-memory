@@ -1,9 +1,9 @@
 import { hn } from "main/utils";
-import category from "./routers/category";
-import demand from "./routers/demand";
-import proposal from "./routers/proposal";
-import subcategory from "./routers/sub";
-import unit from "./routers/unit";
+import category from "routers/store/category";
+import demand from "routers/store/demand";
+import proposal from "routers/store/proposal";
+import subcategory from "routers/store/sub";
+import unit from "routers/store/unit";
 
 const store = hn();
 

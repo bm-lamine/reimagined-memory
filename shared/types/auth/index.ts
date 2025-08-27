@@ -10,9 +10,12 @@ export type Auth = {
 };
 
 export type User = InferSelectModel<typeof schema.users>;
+export type Token = InferSelectModel<typeof schema.tokens>;
+export type InsertToken = InferInsertModel<typeof schema.tokens>;
 
-export type Login = z.infer<typeof baseSchema.login>;
-export type Register = z.infer<typeof baseSchema.register>;
+export type LoginSchema = z.infer<typeof baseSchema.login>;
+export type RegisterSchema = z.infer<typeof baseSchema.register>;
+export type TokenSchema = z.infer<typeof baseSchema.token>;
 
 export type UserSelect = z.infer<typeof userSchema.select>;
 export type UserCreate = z.infer<typeof userSchema.create>;

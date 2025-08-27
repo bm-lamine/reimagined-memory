@@ -1,7 +1,7 @@
 import subSchema from "@enjoy/schema/store/sub.schema";
 import { STATUS_CODE } from "config/codes";
+import subRepo from "db/repos/store/sub.repo";
 import { failed, hn, ok, valid } from "main/utils";
-import subRepo from "services/store/repos/sub.repo";
 import z from "zod";
 
 const subcategory = hn();

@@ -1,34 +1,34 @@
-import complaintSchema from "@enjoy/schema/website/complaint.schema";
+import productSchema from "@enjoy/schema/store/product.schema";
 import { STATUS_CODE } from "config/codes";
 import { failed, hn, ok, valid } from "main/utils";
-import complaintRepo from "services/website/repos/complaint.repo";
+import productRepo from "db/repos/store/product.repo";
 import z from "zod";
 
-const complaint = hn();
+const product = hn();
 
-complaint.get("/", async (ctx) => {
-  const complaints = await complaintRepo.query();
+product.get("/", async (ctx) => {
+  const products = await productRepo.query();
   return ctx.json(
     ok({
       success: true,
-      message: "complaints fetched",
-      data: complaints,
+      message: "products fetched",
+      data: products,
       next: undefined,
     }),
     STATUS_CODE.OK
   );
 });
 
-complaint.get(
+product.get(
   "/:id",
   valid("param", z.object({ id: z.cuid2() })),
   async (ctx) => {
     const { id } = ctx.req.valid("param");
-    const complaint = await complaintRepo.queryById(id);
+    const product = await productRepo.queryById(id);
 
-    if (!complaint) {
+    if (!product) {
       return ctx.json(
-        failed([{ code: "custom", path: [], message: "complaint not found" }]),
+        failed([{ code: "custom", path: [], message: "product not found" }]),
         STATUS_CODE.BAD_REQUEST
       );
     }
@@ -36,22 +36,22 @@ complaint.get(
     return ctx.json(
       ok({
         success: true,
-        message: "complaint fetched",
-        data: complaint,
+        message: "product fetched",
+        data: product,
         next: undefined,
       })
     );
   }
 );
 
-complaint.post("/", valid("json", complaintSchema.create), async (ctx) => {
+product.post("/", valid("json", productSchema.create), async (ctx) => {
   const data = ctx.req.valid("json");
-  const complaint = await complaintRepo.create(data);
+  const product = await productRepo.create(data);
 
-  if (!complaint) {
+  if (!product) {
     return ctx.json(
       failed([
-        { code: "custom", path: [], message: "creating complaint failed" },
+        { code: "custom", path: [], message: "creating product failed" },
       ]),
       STATUS_CODE.INTERNAL_SERVER_ERROR
     );
@@ -60,37 +60,37 @@ complaint.post("/", valid("json", complaintSchema.create), async (ctx) => {
   return ctx.json(
     ok({
       success: true,
-      message: "complaint created",
-      data: complaint,
+      message: "product created",
+      data: product,
       next: undefined,
     }),
     STATUS_CODE.OK
   );
 });
 
-complaint.patch(
+product.patch(
   "/:id",
   valid("param", z.object({ id: z.cuid2() })),
-  valid("json", complaintSchema.update),
+  valid("json", productSchema.update),
   async (ctx) => {
     const { id } = ctx.req.valid("param");
     const data = ctx.req.valid("json");
 
-    if (!(await complaintRepo.queryById(id))) {
+    if (!(await productRepo.queryById(id))) {
       return ctx.json(
         failed([
-          { code: "custom", path: [], message: "updating complaint failed" },
+          { code: "custom", path: [], message: "updating product failed" },
         ]),
         STATUS_CODE.BAD_REQUEST
       );
     }
 
-    const complaint = await complaintRepo.update(id, data);
+    const product = await productRepo.update(id, data);
 
-    if (!complaint) {
+    if (!product) {
       return ctx.json(
         failed([
-          { code: "custom", path: [], message: "updating complaint failed" },
+          { code: "custom", path: [], message: "updating product failed" },
         ]),
         STATUS_CODE.INTERNAL_SERVER_ERROR
       );
@@ -99,8 +99,8 @@ complaint.patch(
     return ctx.json(
       ok({
         success: true,
-        message: "complaint updated",
-        data: complaint,
+        message: "product updated",
+        data: product,
         next: undefined,
       }),
       STATUS_CODE.OK
@@ -108,17 +108,17 @@ complaint.patch(
   }
 );
 
-complaint.delete(
+product.delete(
   "/:id",
   valid("param", z.object({ id: z.cuid2() })),
   async (ctx) => {
     const { id } = ctx.req.valid("param");
-    const complaint = await complaintRepo.delete(id);
+    const product = await productRepo.delete(id);
 
-    if (!complaint) {
+    if (!product) {
       return ctx.json(
         failed([
-          { code: "custom", path: [], message: "deleting complaint failed" },
+          { code: "custom", path: [], message: "deleting product failed" },
         ]),
         STATUS_CODE.INTERNAL_SERVER_ERROR
       );
@@ -127,8 +127,8 @@ complaint.delete(
     return ctx.json(
       ok({
         success: true,
-        message: "complaint deleted",
-        data: complaint,
+        message: "product deleted",
+        data: product,
         next: undefined,
       }),
       STATUS_CODE.OK
@@ -136,4 +136,4 @@ complaint.delete(
   }
 );
 
-export default complaint;
+export default product;

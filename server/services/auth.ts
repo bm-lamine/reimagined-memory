@@ -1,5 +1,5 @@
 import { hn } from "main/utils";
-import base from "./routers/base";
+import base from "routers/auth/base";
 
 const auth = hn();
 

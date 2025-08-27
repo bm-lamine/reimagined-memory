@@ -1,34 +1,34 @@
-import proposalSchema from "@enjoy/schema/store/proposal.schema";
+import complaintSchema from "@enjoy/schema/website/complaint.schema";
 import { STATUS_CODE } from "config/codes";
+import complaintRepo from "db/repos/website/complaint.repo";
 import { failed, hn, ok, valid } from "main/utils";
-import proposalRepo from "services/store/repos/proposal.repo";
 import z from "zod";
 
-const proposal = hn();
+const complaint = hn();
 
-proposal.get("/", async (ctx) => {
-  const units = await proposalRepo.query();
+complaint.get("/", async (ctx) => {
+  const complaints = await complaintRepo.query();
   return ctx.json(
     ok({
       success: true,
-      message: "units fetched",
-      data: units,
+      message: "complaints fetched",
+      data: complaints,
       next: undefined,
     }),
     STATUS_CODE.OK
   );
 });
 
-proposal.get(
+complaint.get(
   "/:id",
   valid("param", z.object({ id: z.cuid2() })),
   async (ctx) => {
     const { id } = ctx.req.valid("param");
-    const proposal = await proposalRepo.queryById(id);
+    const complaint = await complaintRepo.queryById(id);
 
-    if (!proposal) {
+    if (!complaint) {
       return ctx.json(
-        failed([{ code: "custom", path: [], message: "proposal not found" }]),
+        failed([{ code: "custom", path: [], message: "complaint not found" }]),
         STATUS_CODE.BAD_REQUEST
       );
     }
@@ -36,22 +36,22 @@ proposal.get(
     return ctx.json(
       ok({
         success: true,
-        message: "proposal fetched",
-        data: proposal,
+        message: "complaint fetched",
+        data: complaint,
         next: undefined,
       })
     );
   }
 );
 
-proposal.post("/", valid("json", proposalSchema.create), async (ctx) => {
+complaint.post("/", valid("json", complaintSchema.create), async (ctx) => {
   const data = ctx.req.valid("json");
-  const proposal = await proposalRepo.create(data);
+  const complaint = await complaintRepo.create(data);
 
-  if (!proposal) {
+  if (!complaint) {
     return ctx.json(
       failed([
-        { code: "custom", path: [], message: "creating proposal failed" },
+        { code: "custom", path: [], message: "creating complaint failed" },
       ]),
       STATUS_CODE.INTERNAL_SERVER_ERROR
     );
@@ -60,36 +60,37 @@ proposal.post("/", valid("json", proposalSchema.create), async (ctx) => {
   return ctx.json(
     ok({
       success: true,
-      message: "proposal created",
-      data: proposal,
+      message: "complaint created",
+      data: complaint,
       next: undefined,
     }),
     STATUS_CODE.OK
   );
 });
 
-proposal.patch(
+complaint.patch(
   "/:id",
   valid("param", z.object({ id: z.cuid2() })),
-  valid("json", proposalSchema.update),
+  valid("json", complaintSchema.update),
   async (ctx) => {
     const { id } = ctx.req.valid("param");
     const data = ctx.req.valid("json");
 
-    if (!(await proposalRepo.queryById(id))) {
+    if (!(await complaintRepo.queryById(id))) {
       return ctx.json(
         failed([
-          { code: "custom", path: [], message: "updating proposal failed" },
+          { code: "custom", path: [], message: "updating complaint failed" },
         ]),
         STATUS_CODE.BAD_REQUEST
       );
     }
 
-    const proposal = await proposalRepo.update(id, data);
-    if (!proposal) {
+    const complaint = await complaintRepo.update(id, data);
+
+    if (!complaint) {
       return ctx.json(
         failed([
-          { code: "custom", path: [], message: "updating proposal failed" },
+          { code: "custom", path: [], message: "updating complaint failed" },
         ]),
         STATUS_CODE.INTERNAL_SERVER_ERROR
       );
@@ -98,8 +99,8 @@ proposal.patch(
     return ctx.json(
       ok({
         success: true,
-        message: "proposal updated",
-        data: proposal,
+        message: "complaint updated",
+        data: complaint,
         next: undefined,
       }),
       STATUS_CODE.OK
@@ -107,17 +108,17 @@ proposal.patch(
   }
 );
 
-proposal.delete(
+complaint.delete(
   "/:id",
   valid("param", z.object({ id: z.cuid2() })),
   async (ctx) => {
     const { id } = ctx.req.valid("param");
-    const proposal = await proposalRepo.delete(id);
+    const complaint = await complaintRepo.delete(id);
 
-    if (!proposal) {
+    if (!complaint) {
       return ctx.json(
         failed([
-          { code: "custom", path: [], message: "deleting proposal failed" },
+          { code: "custom", path: [], message: "deleting complaint failed" },
         ]),
         STATUS_CODE.INTERNAL_SERVER_ERROR
       );
@@ -126,8 +127,8 @@ proposal.delete(
     return ctx.json(
       ok({
         success: true,
-        message: "proposal deleted",
-        data: proposal,
+        message: "complaint deleted",
+        data: complaint,
         next: undefined,
       }),
       STATUS_CODE.OK
@@ -135,4 +136,4 @@ proposal.delete(
   }
 );
 
-export default proposal;
+export default complaint;

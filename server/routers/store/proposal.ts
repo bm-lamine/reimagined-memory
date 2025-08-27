@@ -1,34 +1,34 @@
-import productSchema from "@enjoy/schema/store/product.schema";
+import proposalSchema from "@enjoy/schema/store/proposal.schema";
 import { STATUS_CODE } from "config/codes";
+import proposalRepo from "db/repos/store/proposal.repo";
 import { failed, hn, ok, valid } from "main/utils";
-import productRepo from "services/store/repos/product.repo";
 import z from "zod";
 
-const product = hn();
+const proposal = hn();
 
-product.get("/", async (ctx) => {
-  const products = await productRepo.query();
+proposal.get("/", async (ctx) => {
+  const units = await proposalRepo.query();
   return ctx.json(
     ok({
       success: true,
-      message: "products fetched",
-      data: products,
+      message: "units fetched",
+      data: units,
       next: undefined,
     }),
     STATUS_CODE.OK
   );
 });
 
-product.get(
+proposal.get(
   "/:id",
   valid("param", z.object({ id: z.cuid2() })),
   async (ctx) => {
     const { id } = ctx.req.valid("param");
-    const product = await productRepo.queryById(id);
+    const proposal = await proposalRepo.queryById(id);
 
-    if (!product) {
+    if (!proposal) {
       return ctx.json(
-        failed([{ code: "custom", path: [], message: "product not found" }]),
+        failed([{ code: "custom", path: [], message: "proposal not found" }]),
         STATUS_CODE.BAD_REQUEST
       );
     }
@@ -36,22 +36,22 @@ product.get(
     return ctx.json(
       ok({
         success: true,
-        message: "product fetched",
-        data: product,
+        message: "proposal fetched",
+        data: proposal,
         next: undefined,
       })
     );
   }
 );
 
-product.post("/", valid("json", productSchema.create), async (ctx) => {
+proposal.post("/", valid("json", proposalSchema.create), async (ctx) => {
   const data = ctx.req.valid("json");
-  const product = await productRepo.create(data);
+  const proposal = await proposalRepo.create(data);
 
-  if (!product) {
+  if (!proposal) {
     return ctx.json(
       failed([
-        { code: "custom", path: [], message: "creating product failed" },
+        { code: "custom", path: [], message: "creating proposal failed" },
       ]),
       STATUS_CODE.INTERNAL_SERVER_ERROR
     );
@@ -60,37 +60,36 @@ product.post("/", valid("json", productSchema.create), async (ctx) => {
   return ctx.json(
     ok({
       success: true,
-      message: "product created",
-      data: product,
+      message: "proposal created",
+      data: proposal,
       next: undefined,
     }),
     STATUS_CODE.OK
   );
 });
 
-product.patch(
+proposal.patch(
   "/:id",
   valid("param", z.object({ id: z.cuid2() })),
-  valid("json", productSchema.update),
+  valid("json", proposalSchema.update),
   async (ctx) => {
     const { id } = ctx.req.valid("param");
     const data = ctx.req.valid("json");
 
-    if (!(await productRepo.queryById(id))) {
+    if (!(await proposalRepo.queryById(id))) {
       return ctx.json(
         failed([
-          { code: "custom", path: [], message: "updating product failed" },
+          { code: "custom", path: [], message: "updating proposal failed" },
         ]),
         STATUS_CODE.BAD_REQUEST
       );
     }
 
-    const product = await productRepo.update(id, data);
-
-    if (!product) {
+    const proposal = await proposalRepo.update(id, data);
+    if (!proposal) {
       return ctx.json(
         failed([
-          { code: "custom", path: [], message: "updating product failed" },
+          { code: "custom", path: [], message: "updating proposal failed" },
         ]),
         STATUS_CODE.INTERNAL_SERVER_ERROR
       );
@@ -99,8 +98,8 @@ product.patch(
     return ctx.json(
       ok({
         success: true,
-        message: "product updated",
-        data: product,
+        message: "proposal updated",
+        data: proposal,
         next: undefined,
       }),
       STATUS_CODE.OK
@@ -108,17 +107,17 @@ product.patch(
   }
 );
 
-product.delete(
+proposal.delete(
   "/:id",
   valid("param", z.object({ id: z.cuid2() })),
   async (ctx) => {
     const { id } = ctx.req.valid("param");
-    const product = await productRepo.delete(id);
+    const proposal = await proposalRepo.delete(id);
 
-    if (!product) {
+    if (!proposal) {
       return ctx.json(
         failed([
-          { code: "custom", path: [], message: "deleting product failed" },
+          { code: "custom", path: [], message: "deleting proposal failed" },
         ]),
         STATUS_CODE.INTERNAL_SERVER_ERROR
       );
@@ -127,8 +126,8 @@ product.delete(
     return ctx.json(
       ok({
         success: true,
-        message: "product deleted",
-        data: product,
+        message: "proposal deleted",
+        data: proposal,
         next: undefined,
       }),
       STATUS_CODE.OK
@@ -136,4 +135,4 @@ product.delete(
   }
 );
 
-export default product;
+export default proposal;

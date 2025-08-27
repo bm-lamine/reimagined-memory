@@ -1,7 +1,7 @@
 import unitSchema from "@enjoy/schema/store/unit.schema";
 import { STATUS_CODE } from "config/codes";
+import unitRepo from "db/repos/store/unit.repo";
 import { failed, hn, ok, valid } from "main/utils";
-import unitRepo from "services/store/repos/unit.repo";
 import z from "zod";
 
 const unit = hn();

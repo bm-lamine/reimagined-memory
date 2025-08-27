@@ -8,6 +8,7 @@ export default createEnv({
       .enum(["development", "test", "production"])
       .default("development"),
     DATABASE_URL: z.url(),
+    JWT_SECRET: z.string(),
   },
 
   /**
