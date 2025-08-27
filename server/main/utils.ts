@@ -1,3 +1,4 @@
+import type { Auth } from "@enjoy/types/auth";
 import { zValidator } from "@hono/zod-validator";
 import { STATUS_CODE } from "config/codes";
 import { Hono, type ValidationTargets } from "hono";
@@ -38,5 +39,3 @@ export const valid = <
       return ctx.json(failed(result.error.issues), STATUS_CODE.BAD_REQUEST);
     }
   });
-
-export type Auth = {};
