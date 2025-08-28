@@ -5,11 +5,13 @@ import type { InferSelectModel } from "drizzle-orm";
 import type z from "zod";
 
 export type Auth = {
+  jti: string;
   userId: string;
   email: string;
 };
 
 export type User = InferSelectModel<typeof schema.users>;
+export type Session = InferSelectModel<typeof schema.sessions>;
 
 export type LoginSchema = z.infer<typeof baseSchema.login>;
 export type RegisterSchema = z.infer<typeof baseSchema.register>;

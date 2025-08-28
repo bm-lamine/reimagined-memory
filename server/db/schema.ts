@@ -1,6 +1,27 @@
 import type { Media } from "@enjoy/types/store";
 import { createId } from "@paralleldrive/cuid2";
-import { foreignKey, pgSchema, primaryKey, unique } from "drizzle-orm/pg-core";
+
+import {
+  customType,
+  foreignKey,
+  pgSchema,
+  primaryKey,
+  unique,
+} from "drizzle-orm/pg-core";
+
+export const bytea = customType<{ data: Uint8Array; driverData: Buffer }>({
+  dataType() {
+    return "bytea";
+  },
+
+  toDriver(value) {
+    return Buffer.from(value);
+  },
+
+  fromDriver(value) {
+    return new Uint8Array(value);
+  },
+});
 
 export const auth = pgSchema("auth");
 
@@ -23,6 +44,23 @@ export const users = auth.table(
   (t) => [
     primaryKey({ columns: [t.id] }),
     unique("unique_user_email").on(t.email),
+  ]
+);
+
+export const sessions = auth.table(
+  "sessions",
+  (c) => ({
+    id: c.varchar().notNull(),
+    userId: c.varchar().notNull(),
+    secretHash: bytea().notNull(),
+    createdAt: c
+      .timestamp({ mode: "date", withTimezone: true })
+      .$defaultFn(() => new Date())
+      .notNull(),
+  }),
+  (t) => [
+    primaryKey({ columns: [t.id] }),
+    foreignKey({ columns: [t.userId], foreignColumns: [users.id] }),
   ]
 );
 

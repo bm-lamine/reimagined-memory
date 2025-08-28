@@ -3,7 +3,7 @@ import { zValidator } from "@hono/zod-validator";
 import { STATUS_CODE } from "config/codes";
 import { Hono, type ValidationTargets } from "hono";
 import type { JwtVariables } from "hono/jwt";
-import client from "utils/redis";
+import client from "cache/redis";
 import { ZodError, ZodType } from "zod";
 import type { $ZodIssue } from "zod/v4/core";
 
