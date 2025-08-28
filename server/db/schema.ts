@@ -1,12 +1,6 @@
 import type { Media } from "@enjoy/types/store";
 import { createId } from "@paralleldrive/cuid2";
-import {
-  customType,
-  foreignKey,
-  pgSchema,
-  primaryKey,
-  unique,
-} from "drizzle-orm/pg-core";
+import { foreignKey, pgSchema, primaryKey, unique } from "drizzle-orm/pg-core";
 
 export const auth = pgSchema("auth");
 
@@ -29,24 +23,6 @@ export const users = auth.table(
   (t) => [
     primaryKey({ columns: [t.id] }),
     unique("unique_user_email").on(t.email),
-  ]
-);
-
-export const tokens = auth.table(
-  "sessions",
-  (c) => ({
-    id: c.varchar().$defaultFn(createId).notNull(),
-    userId: c.varchar().notNull(),
-    token: c.varchar().notNull(),
-    expiresAt: c.timestamp({ mode: "date", withTimezone: true }).notNull(),
-    createdAt: c
-      .timestamp({ mode: "date", withTimezone: true })
-      .$defaultFn(() => new Date())
-      .notNull(),
-  }),
-  (t) => [
-    primaryKey({ columns: [t.id] }),
-    foreignKey({ columns: [t.userId], foreignColumns: [users.id] }),
   ]
 );
 

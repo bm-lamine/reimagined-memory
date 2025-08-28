@@ -3,10 +3,14 @@ import { zValidator } from "@hono/zod-validator";
 import { STATUS_CODE } from "config/codes";
 import { Hono, type ValidationTargets } from "hono";
 import type { JwtVariables } from "hono/jwt";
+import client from "utils/redis";
 import { ZodError, ZodType } from "zod";
 import type { $ZodIssue } from "zod/v4/core";
 
-export const hn = () => new Hono<{ Variables: JwtVariables<Auth> }>();
+export const hn = () =>
+  new Hono<{
+    Variables: JwtVariables<Auth>;
+  }>();
 
 export const ok = (res: {
   success: boolean;
@@ -39,3 +43,9 @@ export const valid = <
       return ctx.json(failed(result.error.issues), STATUS_CODE.BAD_REQUEST);
     }
   });
+
+export async function bootstrap() {
+  console.log("Connecting to Redis...");
+  await client.connect();
+  console.log("Connected to Redis.");
+}

@@ -11,8 +11,4 @@ export default class {
     email: z.email(),
     password: z.string(),
   });
-
-  static readonly token = z.object({
-    token: z.string({ error: "token required" }),
-  });
 }
