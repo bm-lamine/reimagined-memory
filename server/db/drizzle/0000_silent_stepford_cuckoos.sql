@@ -80,6 +80,9 @@ CREATE TABLE "auth"."users" (
 	"name" varchar NOT NULL,
 	"email" varchar NOT NULL,
 	"password" varchar NOT NULL,
+	"isActive" boolean DEFAULT false NOT NULL,
+	"createdAt" timestamp with time zone NOT NULL,
+	"updatedAt" timestamp with time zone,
 	CONSTRAINT "users_id_pk" PRIMARY KEY("id"),
 	CONSTRAINT "unique_user_email" UNIQUE("email")
 );

@@ -1,6 +1,6 @@
 import complaintSchema from "@enjoy/schema/website/complaint.schema";
 import { STATUS_CODE } from "config/codes";
-import complaintRepo from "db/repos/website/complaint.repo";
+import complaintRepo from "repos/website/complaint.repo";
 import { failed, hn, ok, valid } from "main/utils";
 import z from "zod";
 

@@ -1,6 +1,6 @@
 import proposalSchema from "@enjoy/schema/store/proposal.schema";
 import { STATUS_CODE } from "config/codes";
-import proposalRepo from "db/repos/store/proposal.repo";
+import proposalRepo from "repos/store/proposal.repo";
 import { failed, hn, ok, valid } from "main/utils";
 import z from "zod";
 

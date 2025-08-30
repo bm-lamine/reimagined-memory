@@ -1,5 +1,5 @@
 {
-  "id": "b3be7b25-6642-4b44-8725-34a793bd0d59",
+  "id": "a891c634-a25f-4eb5-aefb-9921e6d4474c",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -448,6 +448,25 @@
           "type": "varchar",
           "primaryKey": false,
           "notNull": true
+        },
+        "isActive": {
+          "name": "isActive",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},

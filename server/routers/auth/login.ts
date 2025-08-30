@@ -1,17 +1,18 @@
 import baseSchema from "@enjoy/schema/auth/base.schema";
-import auth from "config/auth";
+import cuid2 from "@paralleldrive/cuid2";
 import { STATUS_CODE } from "config/codes";
+import JwtConfig from "config/jwt";
 import { db, schema } from "db";
 import { eq } from "drizzle-orm";
 import { setCookie } from "hono/cookie";
 import { failed, hn, ok, valid } from "main/utils";
-import passwordUtils from "utils/auth/password.utils";
-import sessionUtils from "utils/auth/session.utils";
+import { HashUtils, JwtUtils } from "utils/auth";
 
 const login = hn();
 
 login.post("/", valid("json", baseSchema.login), async (ctx) => {
   const data = ctx.req.valid("json");
+
   const [user] = await db
     .select()
     .from(schema.users)
@@ -19,34 +20,65 @@ login.post("/", valid("json", baseSchema.login), async (ctx) => {
 
   if (!user) {
     return ctx.json(
-      failed([{ code: "custom", path: ["email"], message: "user not found" }]),
+      failed([
+        {
+          code: "custom",
+          path: ["user"],
+          message: "Email not found in our records",
+        },
+      ]),
       STATUS_CODE.BAD_REQUEST
     );
-  } else if (!(await passwordUtils.verify(data.password, user.password))) {
+  } else if (!(await HashUtils.verify(data.password, user.password))) {
     return ctx.json(
       failed([
-        { code: "custom", path: ["email"], message: "invalid credentials" },
+        {
+          code: "custom",
+          path: ["email", "password"],
+          message: "Invalid credentials",
+        },
       ]),
       STATUS_CODE.BAD_REQUEST
     );
   }
 
-  const res = await sessionUtils.create(user.id);
+  const accessToken = await JwtUtils.sign(
+    {
+      jti: cuid2.createId(),
+      email: user.email,
+      userId: user.id,
+    },
+    false
+  );
 
-  if (!res) {
-    return ctx.json(
-      failed([{ code: "custom", path: [], message: "internal server error" }]),
-      STATUS_CODE.BAD_REQUEST
-    );
-  }
+  const refreshToken = await JwtUtils.sign(
+    {
+      jti: cuid2.createId(),
+      email: user.email,
+      userId: user.id,
+    },
+    true
+  );
 
-  setCookie(ctx, auth.session.name, res.token, auth.session.cookie);
+  setCookie(
+    ctx,
+    JwtConfig.accessToken.name,
+    accessToken,
+    JwtConfig.accessToken.cookie
+  );
+
+  setCookie(
+    ctx,
+    JwtConfig.refreshToken.name,
+    refreshToken,
+    JwtConfig.refreshToken.cookie
+  );
 
   return ctx.json(
     ok({
       success: true,
-      message: "user logged",
-      data: { session: res.token },
+      message: "User successfully logged in.",
+      data: undefined,
       next: "/",
     })
   );

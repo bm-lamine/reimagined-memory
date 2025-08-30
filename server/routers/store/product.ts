@@ -1,7 +1,7 @@
 import productSchema from "@enjoy/schema/store/product.schema";
 import { STATUS_CODE } from "config/codes";
 import { failed, hn, ok, valid } from "main/utils";
-import productRepo from "db/repos/store/product.repo";
+import productRepo from "repos/store/product.repo";
 import z from "zod";
 
 const product = hn();

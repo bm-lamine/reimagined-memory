@@ -1,6 +1,6 @@
 import baseSchema from "@enjoy/schema/auth/base.schema";
 import { STATUS_CODE } from "config/codes";
-import userRepo from "db/repos/auth/user.repo";
+import userRepo from "repos/auth/user.repo";
 import { failed, hn, ok, valid } from "main/utils";
 
 const register = hn();
@@ -12,7 +12,11 @@ register.post("/", valid("json", baseSchema.register), async (ctx) => {
   if (conflicts.has("email")) {
     return ctx.json(
       failed([
-        { code: "custom", path: ["email"], message: "email already used" },
+        {
+          code: "custom",
+          path: ["email"],
+          message: "Email already used",
+        },
       ]),
       STATUS_CODE.BAD_REQUEST
     );
@@ -27,7 +31,11 @@ register.post("/", valid("json", baseSchema.register), async (ctx) => {
   if (!user) {
     return ctx.json(
       failed([
-        { code: "custom", path: [], message: "user registration failed" },
+        {
+          code: "custom",
+          path: [],
+          message: "User registration failed",
+        },
       ]),
       STATUS_CODE.INTERNAL_SERVER_ERROR
     );
@@ -36,7 +44,7 @@ register.post("/", valid("json", baseSchema.register), async (ctx) => {
   return ctx.json(
     ok({
       success: true,
-      message: "user registered",
+      message: "User Registered Successfully",
       data: undefined,
       next: "/auth/verify-email",
     })
