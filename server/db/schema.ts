@@ -12,6 +12,7 @@ export const users = auth.table(
     email: c.varchar().notNull(),
     password: c.varchar().notNull(),
     isActive: c.boolean().default(false).notNull(),
+    emailVerifiedAt: c.timestamp({ mode: "date", withTimezone: true }),
     createdAt: c
       .timestamp({ mode: "date", withTimezone: true })
       .$defaultFn(() => new Date())

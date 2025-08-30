@@ -2,6 +2,7 @@ import baseSchema from "@enjoy/schema/auth/base.schema";
 import { STATUS_CODE } from "config/codes";
 import userRepo from "repos/auth/user.repo";
 import { failed, hn, ok, valid } from "main/utils";
+import { EmailUtils } from "utils/auth";
 
 const register = hn();
 
@@ -40,6 +41,9 @@ register.post("/", valid("json", baseSchema.register), async (ctx) => {
       STATUS_CODE.INTERNAL_SERVER_ERROR
     );
   }
+
+  const otp = await EmailUtils.createOtp("email-verification", user.email);
+  console.log(`email-verification:${user.email} otp ==> ${otp} `);
 
   return ctx.json(
     ok({

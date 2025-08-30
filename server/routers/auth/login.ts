@@ -40,6 +40,17 @@ login.post("/", valid("json", baseSchema.login), async (ctx) => {
       ]),
       STATUS_CODE.BAD_REQUEST
     );
+  } else if (!user.emailVerifiedAt) {
+    return ctx.json(
+      failed([
+        {
+          code: "custom",
+          path: ["email"],
+          message: "Email unverified",
+        },
+      ]),
+      STATUS_CODE.BAD_REQUEST
+    );
   }
 
   const accessToken = await JwtUtils.sign(

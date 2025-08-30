@@ -3,6 +3,7 @@ import client from "cache/redis";
 import authConfig from "config/jwt";
 import env from "config/env";
 import * as jwt from "hono/jwt";
+import otp from "otp-generator";
 
 export class JwtUtils {
   static key = (userId: string, jti: string) => `token:${userId}:${jti}`;
@@ -59,3 +60,31 @@ export class HashUtils {
     return await Bun.password.verify(p, h);
   }
 }
+
+export class EmailUtils {
+  static generateOtp = (length?: number) => otp.generate(length ?? 6);
+
+  static async createOtp(prefix: OtpPrefix, email: string) {
+    const otp = this.generateOtp();
+    const hash = await HashUtils.hash(otp);
+    await client.setEx(`${prefix}:${email}`, 5 * 60, hash);
+    return otp;
+  }
+
+  static async validateOtp(prefix: OtpPrefix, email: string, otp: string) {
+    const hash = await client.get(`${prefix}:${email}`);
+
+    if (hash && (await HashUtils.verify(otp, hash))) {
+      this.deleteOtp(prefix, email);
+      return true;
+    }
+
+    return false;
+  }
+
+  static async deleteOtp(prefix: OtpPrefix, email: string) {
+    await client.del(`${prefix}:${email}`);
+  }
+}
+
+export type OtpPrefix = "email-verification" | "password-reset";

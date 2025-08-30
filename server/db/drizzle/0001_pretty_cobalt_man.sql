@@ -1,0 +1,1 @@
+ALTER TABLE "auth"."users" ADD COLUMN "emailVerifiedAt" timestamp with time zone;

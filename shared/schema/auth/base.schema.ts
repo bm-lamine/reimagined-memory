@@ -11,4 +11,13 @@ export default class {
     email: z.email(),
     password: z.string(),
   });
+
+  static readonly verifyEmail = z.object({
+    email: z.email(),
+    otp: z.string(),
+  });
+
+  static readonly resendEmailVerification = z.object({
+    email: z.email(),
+  });
 }
