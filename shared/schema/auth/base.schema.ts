@@ -20,4 +20,19 @@ export default class {
   static readonly resendEmailVerification = z.object({
     email: z.email(),
   });
+
+  static readonly requestPasswordReset = z.object({
+    email: z.email(),
+  });
+
+  static readonly verifyPasswordReset = z.object({
+    email: z.email(),
+    otp: z.string(),
+  });
+
+  static readonly resetPassword = z.object({
+    email: z.email(),
+    otp: z.string(),
+    password: z.string(),
+  });
 }

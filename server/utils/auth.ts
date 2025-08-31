@@ -71,15 +71,23 @@ export class EmailUtils {
     return otp;
   }
 
-  static async validateOtp(prefix: OtpPrefix, email: string, otp: string) {
+  static async validateOtp(
+    prefix: OtpPrefix,
+    email: string,
+    otp: string,
+    del = true
+  ) {
     const hash = await client.get(`${prefix}:${email}`);
 
-    if (hash && (await HashUtils.verify(otp, hash))) {
-      this.deleteOtp(prefix, email);
-      return true;
+    if (!hash) return false;
+
+    const isValid = await HashUtils.verify(otp, hash);
+
+    if (isValid && del) {
+      await this.deleteOtp(prefix, email);
     }
 
-    return false;
+    return true;
   }
 
   static async deleteOtp(prefix: OtpPrefix, email: string) {
