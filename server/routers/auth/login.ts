@@ -1,10 +1,8 @@
 import baseSchema from "@enjoy/schema/auth/base.schema";
 import cuid2 from "@paralleldrive/cuid2";
 import { STATUS_CODE } from "config/codes";
-import JwtConfig from "config/jwt";
 import { db, schema } from "db";
 import { eq } from "drizzle-orm";
-import { setCookie } from "hono/cookie";
 import { failed, hn, ok, valid } from "main/utils";
 import { HashUtils, JwtUtils } from "utils/auth";
 
@@ -71,25 +69,11 @@ login.post("/", valid("json", baseSchema.login), async (ctx) => {
     true
   );
 
-  setCookie(
-    ctx,
-    JwtConfig.accessToken.name,
-    accessToken,
-    JwtConfig.accessToken.cookie
-  );
-
-  setCookie(
-    ctx,
-    JwtConfig.refreshToken.name,
-    refreshToken,
-    JwtConfig.refreshToken.cookie
-  );
-
   return ctx.json(
     ok({
       success: true,
       message: "User successfully logged in.",
-      data: undefined,
+      data: { accessToken, refreshToken },
       next: "/",
     })
   );

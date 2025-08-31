@@ -6,18 +6,14 @@ import type { JwtVariables } from "hono/jwt";
 import client from "cache/redis";
 import { ZodError, ZodType } from "zod";
 import type { $ZodIssue } from "zod/v4/core";
+import { type Ok } from "@enjoy/types";
 
 export const hn = () =>
   new Hono<{
     Variables: JwtVariables<Auth>;
   }>();
 
-export const ok = (res: {
-  success: boolean;
-  message: string;
-  data: any | undefined;
-  next: string | undefined;
-}) => res;
+export const ok = (res: Ok) => res;
 
 export const failed = (issues: Array<$ZodIssue>) => {
   return {
@@ -33,7 +29,7 @@ export const failed = (issues: Array<$ZodIssue>) => {
 
 export const valid = <
   T extends ZodType,
-  Target extends keyof ValidationTargets
+  Target extends keyof ValidationTargets,
 >(
   target: Target,
   schema: T

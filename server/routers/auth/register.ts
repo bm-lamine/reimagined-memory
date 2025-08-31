@@ -45,14 +45,10 @@ register.post("/", valid("json", baseSchema.register), async (ctx) => {
   const otp = await EmailUtils.createOtp("email-verification", user.email);
   console.log(`email-verification:${user.email} otp ==> ${otp} `);
 
-  return ctx.json(
-    ok({
-      success: true,
-      message: "User Registered Successfully",
-      data: undefined,
-      next: "/auth/verify-email",
-    })
-  );
+  return ctx.json({
+    message: "user registered successfully",
+    next: "/auth/verify-email",
+  });
 });
 
 export default register;

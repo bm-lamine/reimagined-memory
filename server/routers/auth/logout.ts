@@ -11,23 +11,21 @@ const logout = hn();
 logout.post(
   "/",
   valid(
-    "cookie",
+    "json",
     z.object({
-      refresh_token: z.string({ error: "refresh token required" }),
+      accessToken: z.string().optional(),
+      refreshToken: z.string({ error: "refresh token required" }),
     })
   ),
   async (ctx) => {
-    const data = ctx.req.valid("cookie");
-    const payload = await JwtUtils.verify(data.refresh_token);
+    const data = ctx.req.valid("json");
+    const payload = await JwtUtils.verify(data.refreshToken);
 
     if (!payload) {
       throw new HTTPException(STATUS_CODE.UNAUTHORIZED, {
         message: "invalid token",
       });
     }
-
-    deleteCookie(ctx, JwtConfig.accessToken.name);
-    deleteCookie(ctx, JwtConfig.refreshToken.name);
 
     await JwtUtils.invalidate(payload.userId, payload.jti);
 
