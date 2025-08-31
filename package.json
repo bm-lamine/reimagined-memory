@@ -3,7 +3,10 @@
   "private": true,
   "workspaces": [
     "server",
+    "client",
     "shared/*"
   ],
-  "scripts": {}
+  "scripts": {
+    "dev": "bun run --filter=\"!shared\" dev"
+  }
 }
