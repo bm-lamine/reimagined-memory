@@ -4,7 +4,7 @@ import { STATUS_CODE } from "config/codes";
 import { db, schema } from "db";
 import { eq } from "drizzle-orm";
 import { failed, hn, ok, valid } from "main/utils";
-import { HashUtils, JwtUtils } from "utils/auth";
+import { EmailUtils, HashUtils, JwtUtils } from "utils/auth";
 
 const login = hn();
 
@@ -39,16 +39,13 @@ login.post("/", valid("json", baseSchema.login), async (ctx) => {
       STATUS_CODE.BAD_REQUEST
     );
   } else if (!user.emailVerifiedAt) {
-    return ctx.json(
-      failed([
-        {
-          code: "custom",
-          path: ["email"],
-          message: "Email unverified",
-        },
-      ]),
-      STATUS_CODE.BAD_REQUEST
-    );
+    const otp = await EmailUtils.createOtp("email-verification", data.email);
+    console.log(`email-verification:${data.email} otp ==> ${otp} `);
+
+    return ctx.json({
+      message: "email not verified, otp sent",
+      next: "/auth/verify-email",
+    });
   }
 
   const accessToken = await JwtUtils.sign(
@@ -69,14 +66,12 @@ login.post("/", valid("json", baseSchema.login), async (ctx) => {
     true
   );
 
-  return ctx.json(
-    ok({
-      success: true,
-      message: "User successfully logged in.",
-      data: { accessToken, refreshToken },
-      next: "/",
-    })
-  );
+  return ctx.json({
+    accessToken,
+    refreshToken,
+    message: "user logged in",
+    next: "/",
+  });
 });
 
 export default login;

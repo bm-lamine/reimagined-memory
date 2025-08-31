@@ -6,11 +6,6 @@ import { authStore } from "~/store/auth";
 
 export const $fetch = createFetch({
   baseURL: env.VITE_API_URL,
-  retry: {
-    type: "linear",
-    attempts: 3,
-    delay: 1000,
-  },
   mode: "cors",
   headers: {
     accept: "application/json",
@@ -30,15 +25,8 @@ export const $fetch = createFetch({
     ),
   }),
   async onError(ctx) {
-    console.log(ctx.error);
     if (ctx.error.status === 401) {
       await refreshAccessToken();
     }
-  },
-  onRequest(context) {
-    console.log(context);
-  },
-  onResponse(context) {
-    console.log(context.response);
   },
 });

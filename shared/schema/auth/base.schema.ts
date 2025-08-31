@@ -2,9 +2,9 @@ import z from "zod";
 
 export default class {
   static readonly register = z.object({
-    name: z.string(),
-    email: z.email(),
-    password: z.string(),
+    name: z.string({ error: "required" }),
+    email: z.email({ error: "required" }),
+    password: z.string({ error: "required" }),
   });
 
   static readonly login = z.object({

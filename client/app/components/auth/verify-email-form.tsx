@@ -1,0 +1,60 @@
+import baseSchema from "@enjoy/schema/auth/base.schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router";
+import { toast } from "sonner";
+import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
+import { assignFormErrors } from "~/lib/assign-form-errors";
+import { $fetch } from "~/utils/$fetch";
+
+export default function () {
+  const navigate = useNavigate();
+  const form = useForm({
+    resolver: zodResolver(baseSchema.verifyEmail),
+    defaultValues: { email: localStorage.getItem("email") ?? "" },
+  });
+
+  const onSubmit = form.handleSubmit(async (values) => {
+    console.log(values);
+    const { data, error } = await $fetch<{
+      message: string;
+      next: string;
+    }>("/auth/verify-email", {
+      method: "POST",
+      body: JSON.stringify(values),
+    });
+
+    if (error || !data) {
+      assignFormErrors(error.errors, form);
+      return;
+    }
+
+    toast.success(data.message);
+    navigate(data.next);
+  });
+
+  return (
+    <form onSubmit={onSubmit}>
+      <div>
+        <label>email</label>
+        <Input {...form.register("email")} />
+        {form.formState.errors.email && (
+          <p>{form.formState.errors.email.message}</p>
+        )}
+      </div>
+
+      <div>
+        <label>otp</label>
+        <Input {...form.register("otp")} />
+        {form.formState.errors.otp && (
+          <p>{form.formState.errors.otp.message}</p>
+        )}
+      </div>
+
+      <Button type="submit" disabled={form.formState.isSubmitting}>
+        Submit
+      </Button>
+    </form>
+  );
+}

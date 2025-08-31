@@ -1,6 +1,6 @@
-import { authStore } from "~/store/auth";
-import { $fetch } from "./$fetch";
 import z from "zod";
+import { authStore } from "~/store/auth";
+import { $fetch } from "~/utils/$fetch";
 
 export async function refreshAccessToken() {
   const { refreshToken, login, logout } = authStore.getState();
