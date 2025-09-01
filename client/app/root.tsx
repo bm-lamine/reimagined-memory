@@ -7,7 +7,6 @@ import {
   ScrollRestoration,
 } from "react-router";
 
-import { Toaster } from "~/components/ui/sonner";
 import type { Route } from "./+types/root";
 import "./app.css";
 
@@ -42,21 +41,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function HydrateFallback() {
-  return (
-    <div className="min-h-screen flex items-center justify-center">
-      <p>loading ...</p>
-    </div>
-  );
-}
-
 export default function App() {
-  return (
-    <div>
-      <Outlet />
-      <Toaster />
-    </div>
-  );
+  return <Outlet />;
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {

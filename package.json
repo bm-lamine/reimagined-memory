@@ -1,12 +1,9 @@
 {
-  "name": "enjoy",
+  "name": "brave",
   "private": true,
   "workspaces": [
     "server",
     "client",
-    "shared/*"
-  ],
-  "scripts": {
-    "dev": "bun run --filter=\"!shared\" dev"
-  }
+    "packages/*"
+  ]
 }
