@@ -1,7 +1,7 @@
 import baseSchema from "@enjoy/schema/auth/base.schema";
 import { STATUS_CODE } from "config/codes";
+import { failed, hn, valid } from "main/utils";
 import userRepo from "repos/auth/user.repo";
-import { failed, hn, ok, valid } from "main/utils";
 import { EmailUtils } from "utils/auth";
 
 const register = hn();
@@ -19,7 +19,7 @@ register.post("/", valid("json", baseSchema.register), async (ctx) => {
           message: "Email already used",
         },
       ]),
-      STATUS_CODE.BAD_REQUEST
+      STATUS_CODE.BAD_REQUEST,
     );
   }
 
@@ -38,7 +38,7 @@ register.post("/", valid("json", baseSchema.register), async (ctx) => {
           message: "User registration failed",
         },
       ]),
-      STATUS_CODE.INTERNAL_SERVER_ERROR
+      STATUS_CODE.INTERNAL_SERVER_ERROR,
     );
   }
 

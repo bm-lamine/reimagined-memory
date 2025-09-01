@@ -5,7 +5,7 @@ import type { InferSelectModel } from "drizzle-orm";
 import type z from "zod";
 
 export type Auth = {
-  jti: string;
+  session: string;
   userId: string;
   email: string;
 };

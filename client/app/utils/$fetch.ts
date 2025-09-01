@@ -1,8 +1,9 @@
 import { createFetch } from "@better-fetch/fetch";
 import z from "zod";
+
 import env from "~/env";
-import { refreshAccessToken } from "~/lib/refresh-access-token";
-import { authStore } from "~/store/auth";
+import { refreshAccessToken } from "~/lib/refresh";
+import { authStore } from "~/stores/auth";
 
 export const $fetch = createFetch({
   baseURL: env.VITE_API_URL,
@@ -13,7 +14,7 @@ export const $fetch = createFetch({
   },
   auth: {
     type: "Bearer",
-    token: () => authStore.getState().accessToken,
+    token: () => authStore.getState().token,
   },
   defaultError: z.object({
     errors: z.array(

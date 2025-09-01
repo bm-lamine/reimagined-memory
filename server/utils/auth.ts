@@ -1,53 +1,123 @@
 import type { Auth } from "@enjoy/types/auth";
 import client from "cache/redis";
-import authConfig from "config/jwt";
 import env from "config/env";
+import JwtConfig from "config/jwt";
+import SessionConfig from "config/session";
+import { db, schema } from "db";
+import { eq } from "drizzle-orm";
 import * as jwt from "hono/jwt";
+import * as nanoid from "nanoid";
 import otp from "otp-generator";
 
 export class JwtUtils {
   static key = (userId: string, jti: string) => `token:${userId}:${jti}`;
 
-  static async sign(auth: Auth, refresh?: boolean) {
-    const now = Math.floor(Date.now() / 1000);
+  static async sign(auth: Auth) {
+    return await jwt.sign(
+      { ...auth, exp: Math.floor(Date.now() / 1000) + JwtConfig.expiresIn },
+      env.JWT_SECRET,
+      "HS256"
+    );
+  }
+}
 
-    const expiresIn = refresh
-      ? authConfig.refreshToken.expiresIn
-      : authConfig.accessToken.expiresIn;
+export class SessionUtils {
+  static generateSecureRandomString = nanoid.customAlphabet(
+    "abcdefghijkmnpqrstuvwxyz23456789",
+    24
+  );
 
-    const exp = now + expiresIn;
-
-    const token = await jwt.sign({ ...auth, exp }, env.JWT_SECRET, "HS256");
-
-    if (refresh) {
-      // Store by jti (or full token if you prefer)
-      await client.setEx(this.key(auth.userId, auth.jti), expiresIn, token);
-    }
-
-    return token;
+  static async hashSecret(secret: string) {
+    const bytes = new TextEncoder().encode(secret);
+    const hashBuffer = await crypto.subtle.digest("SHA-256", bytes);
+    return new Uint8Array(hashBuffer);
   }
 
-  static async verify(token: string) {
-    try {
-      const payload = (await jwt.verify(token, env.JWT_SECRET)) as Auth;
-      return payload;
-    } catch (error) {
+  static async create(userId: string) {
+    const now = new Date();
+
+    const id = this.generateSecureRandomString();
+    const secret = this.generateSecureRandomString();
+    const secretHash = await this.hashSecret(secret);
+
+    const token = `${id}.${secret}`;
+
+    const [session] = await db
+      .insert(schema.sessions)
+      .values({ id, secretHash, userId })
+      .returning();
+
+    if (!session) return null;
+
+    return { session, token };
+  }
+
+  static async get(id: string) {
+    const now = new Date();
+    const [res] = await db
+      .select({ session: schema.sessions, user: schema.users })
+      .from(schema.sessions)
+      .where(eq(schema.sessions.id, id))
+      .innerJoin(schema.users, eq(schema.users.id, schema.sessions.userId));
+
+    if (!res) return null;
+
+    if (
+      now.getTime() - res.session.createdAt.getTime() >=
+      SessionConfig.expiresIn * 1000
+    ) {
+      await this.delete(id);
       return null;
     }
+
+    return res;
   }
 
-  static async validate(token: string) {
-    const payload = await this.verify(token);
-    if (!payload) return null;
+  static async validateToken(token: string) {
+    const [id, secret] = token.split(".");
+    if (!id || !secret) return null;
 
-    const stored = await client.get(this.key(payload.userId, payload.jti));
-    if (stored !== token) return null;
+    const res = await this.get(id);
+    if (!res) return null;
 
-    return payload;
+    const tokenSecretHash = await this.hashSecret(secret);
+    const validSecret = await crypto.timingSafeEqual(
+      tokenSecretHash,
+      res.session.secretHash
+    );
+
+    if (!validSecret) return null;
+
+    const newSecret = this.generateSecureRandomString();
+    const newSecretHash = await this.hashSecret(newSecret);
+
+    const [newSession] = await db
+      .update(schema.sessions)
+      .set({ secretHash: newSecretHash })
+      .where(eq(schema.sessions.id, id))
+      .returning();
+
+    if (!newSession) {
+      console.warn(`⚠️ Rotation failed for session ${id}`);
+      return {
+        session: res.session,
+        user: res.user,
+        token,
+      };
+    }
+
+    return {
+      user: res.user,
+      session: newSession,
+      token: `${id}.${newSecret}`,
+    };
   }
 
-  static async invalidate(userId: string, jti: string) {
-    return await client.del(this.key(userId, jti));
+  static async delete(id: string) {
+    return await db
+      .delete(schema.sessions)
+      .where(eq(schema.sessions.id, id))
+      .returning();
   }
 }
 

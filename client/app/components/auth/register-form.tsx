@@ -1,12 +1,12 @@
 import baseSchema from "@enjoy/schema/auth/base.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Input } from "~/components/ui/input";
-import { Button } from "../ui/button";
-import { $fetch } from "~/utils/$fetch";
-import { assignFormErrors } from "~/lib/assign-form-errors";
-import { toast } from "sonner";
 import { useNavigate } from "react-router";
+import { toast } from "sonner";
+import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
+import { assignFormErrors } from "~/lib/assign-form-errors";
+import { $fetch } from "~/utils/$fetch";
 
 export default function RegisterForm() {
   const navigate = useNavigate();
@@ -27,7 +27,6 @@ export default function RegisterForm() {
       return;
     }
 
-    localStorage.setItem("email", values.email);
     toast.success(data.message);
     navigate(data.next);
   });

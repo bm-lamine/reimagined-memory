@@ -59,8 +59,6 @@ resetPassword.post(
       .set({ password: await HashUtils.hash(data.password) })
       .where(eq(schema.users.id, user.id));
 
-    await JwtUtils.invalidate(user.id, "*");
-
     return ctx.json(
       ok({
         success: true,

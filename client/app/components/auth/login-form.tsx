@@ -1,27 +1,27 @@
 import baseSchema from "@enjoy/schema/auth/base.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Input } from "~/components/ui/input";
-import { Button } from "../ui/button";
-import { $fetch } from "~/utils/$fetch";
-import { assignFormErrors } from "~/lib/assign-form-errors";
-import { toast } from "sonner";
 import { useNavigate } from "react-router";
-import { authStore } from "~/store/auth";
+import { toast } from "sonner";
 import { useStore } from "zustand";
+import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
+import { assignFormErrors } from "~/lib/assign-form-errors";
+import { authStore } from "~/stores/auth";
+import { $fetch } from "~/utils/$fetch";
 
 export default function () {
   const navigate = useNavigate();
-  const { login } = useStore(authStore);
+  const { setToken } = useStore(authStore);
   const form = useForm({ resolver: zodResolver(baseSchema.login) });
 
   const onSubmit = form.handleSubmit(async (values) => {
     console.log(values);
     const { data, error } = await $fetch<{
-      accessToken?: string;
-      refreshToken?: string;
+      emailVerified: boolean;
       message: string;
       next: string;
+      token?: string;
     }>("/auth/login", {
       method: "POST",
       body: JSON.stringify(values),
@@ -30,11 +30,17 @@ export default function () {
     if (error || !data) {
       assignFormErrors(error.errors, form);
       return;
-    } else if (data.accessToken && data.refreshToken) {
-      login(data.accessToken, data.refreshToken);
+    } else if (!data.emailVerified) {
+      toast.error("Email not verified");
+      navigate(data.next);
+      return;
+    } else if (data.emailVerified && data.token) {
+      setToken(data.token);
+      toast.success(data.message);
+      navigate(data.next);
+      return;
     }
 
-    localStorage.setItem("email", values.email);
     toast.success(data.message);
     navigate(data.next);
   });
