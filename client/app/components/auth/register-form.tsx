@@ -25,10 +25,11 @@ export default function RegisterForm() {
     if (error || !data) {
       assignFormErrors(error.errors, form);
       return;
+    } else {
+      toast.success(data.message);
+      navigate(data.next);
+      return;
     }
-
-    toast.success(data.message);
-    navigate(data.next);
   });
 
   return (

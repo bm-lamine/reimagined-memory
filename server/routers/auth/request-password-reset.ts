@@ -23,22 +23,18 @@ requestPasswordReset.post(
         failed([
           { code: "custom", path: ["email"], message: "User not found" },
         ]),
-        STATUS_CODE.NOT_FOUND
+        STATUS_CODE.NOT_FOUND,
       );
     }
 
     const otp = await EmailUtils.createOtp("password-reset", data.email);
     console.log(`password-reset:${data.email} otp ==> ${otp} `);
 
-    return ctx.json(
-      ok({
-        success: true,
-        message: "Password reset sent",
-        data: undefined,
-        next: "/auth/reset-password",
-      })
-    );
-  }
+    return ctx.json({
+      message: "Password reset sent",
+      next: "/auth/reset-password",
+    });
+  },
 );
 
 export default requestPasswordReset;

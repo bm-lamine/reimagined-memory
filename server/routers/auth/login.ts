@@ -1,12 +1,10 @@
 import baseSchema from "@enjoy/schema/auth/base.schema";
-import cuid2 from "@paralleldrive/cuid2";
 import { STATUS_CODE } from "config/codes";
 import SessionConfig from "config/session";
 import { db, schema } from "db";
 import { eq } from "drizzle-orm";
 import { setCookie } from "hono/cookie";
-import { HTTPException } from "hono/http-exception";
-import { failed, hn, ok, valid } from "main/utils";
+import { failed, hn, valid } from "main/utils";
 import { EmailUtils, HashUtils, JwtUtils, SessionUtils } from "utils/auth";
 
 const login = hn();

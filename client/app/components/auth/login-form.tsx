@@ -30,19 +30,16 @@ export default function () {
     if (error || !data) {
       assignFormErrors(error.errors, form);
       return;
-    } else if (!data.emailVerified) {
+    } else if (!data.emailVerified && !data.token) {
       toast.error("Email not verified");
       navigate(data.next);
       return;
     } else if (data.emailVerified && data.token) {
-      setToken(data.token);
       toast.success(data.message);
+      setToken(data.token);
       navigate(data.next);
       return;
     }
-
-    toast.success(data.message);
-    navigate(data.next);
   });
 
   return (

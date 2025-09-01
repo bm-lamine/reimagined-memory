@@ -23,32 +23,27 @@ verifyPasswordReset.post(
         failed([
           { code: "custom", path: ["email"], message: "User not found" },
         ]),
-        STATUS_CODE.NOT_FOUND
+        STATUS_CODE.NOT_FOUND,
       );
     }
 
     const valid = await EmailUtils.validateOtp(
       "password-reset",
       data.email,
-      data.otp
+      data.otp,
     );
 
     if (!valid) {
       return ctx.json(
         failed([{ code: "custom", path: ["otp"], message: "Invalid otp" }]),
-        STATUS_CODE.BAD_REQUEST
+        STATUS_CODE.BAD_REQUEST,
       );
     }
 
-    return ctx.json(
-      ok({
-        success: true,
-        message: "Password Reset Token Correct",
-        data: undefined,
-        next: undefined,
-      })
-    );
-  }
+    return ctx.json({
+      message: "Password Reset Token Correct",
+    });
+  },
 );
 
 export default verifyPasswordReset;

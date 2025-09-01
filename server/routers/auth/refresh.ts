@@ -30,7 +30,12 @@ refresh.post("/", async (ctx) => {
   });
 
   if (res.token !== token) {
-    setCookie(ctx, SessionConfig.name, res.token, SessionConfig.cookie);
+    setCookie(
+      ctx,
+      SessionConfig.COOKIE_NAME,
+      res.token,
+      SessionConfig.COOKIE_OPTIONS,
+    );
   }
 
   return ctx.json({ token: newToken });

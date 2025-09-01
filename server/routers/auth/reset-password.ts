@@ -16,13 +16,13 @@ resetPassword.post(
     const valid = await EmailUtils.validateOtp(
       "password-reset",
       data.email,
-      data.otp
+      data.otp,
     );
 
     if (!valid) {
       return ctx.json(
         failed([{ code: "custom", path: ["otp"], message: "Invalid otp" }]),
-        STATUS_CODE.BAD_REQUEST
+        STATUS_CODE.BAD_REQUEST,
       );
     }
 
@@ -36,7 +36,7 @@ resetPassword.post(
         failed([
           { code: "custom", path: ["email"], message: "User not found" },
         ]),
-        STATUS_CODE.NOT_FOUND
+        STATUS_CODE.NOT_FOUND,
       );
     }
 
@@ -50,7 +50,7 @@ resetPassword.post(
             message: "New password cannot be the same as the old one",
           },
         ]),
-        STATUS_CODE.BAD_REQUEST
+        STATUS_CODE.BAD_REQUEST,
       );
     }
 
@@ -59,15 +59,10 @@ resetPassword.post(
       .set({ password: await HashUtils.hash(data.password) })
       .where(eq(schema.users.id, user.id));
 
-    return ctx.json(
-      ok({
-        success: true,
-        message: "Password Reset Success",
-        data: undefined,
-        next: undefined,
-      })
-    );
-  }
+    return ctx.json({
+      message: "Password Reset Success",
+    });
+  },
 );
 
 export default resetPassword;
